@@ -65,54 +65,118 @@ void wideOpenClaw()
 	clawL = clawWideOpenPos; clawR = -clawWideOpenPos;
 }
 
+static int clicksStart;
 task lower();
-task lowerPartway();
+task liftToPartway();
 task lift()
 {
 	const int RAISE_AMOUNT = maxMotor;
 	StopTask(lower);
-	StopTask(lowerPartway);
-	int clicksStart = liftClicks;
+	StopTask(liftToPartway);
 
-	liftENC = 0;
 
-	liftMotors(RAISE_AMOUNT);
-	while(liftClicks<maxLiftClicks)
+	if(liftValue<=0)
 	{
-		liftClicks = clicksStart + liftENC;
+		clicksStart = liftClicks;
+
+		liftENC = 0;
+
+		liftMotors(RAISE_AMOUNT);
+		while(liftClicks<maxLiftClicks)
+		{
+			liftClicks = clicksStart + liftENC;
+		}
+		liftMotors(0);
 	}
-	liftMotors(0);
+	else
+	{
+		while(liftClicks<maxLiftClicks)
+		{
+			liftClicks = clicksStart + liftENC;
+		}
+		liftMotors(0);
+	}
 
 }
 task lower()
 {
 	const int RAISE_AMOUNT = -3*maxMotor/4;
 	StopTask(lift);
-	StopTask(lowerPartway);
-	int clicksStart = liftClicks;
+	StopTask(liftToPartway);
 
-	liftENC = 0;
-	liftMotors(RAISE_AMOUNT);
-	while(liftClicks>0)
+
+	if(liftValue>=0)
 	{
-		liftClicks = clicksStart - liftENC;
+		clicksStart = liftClicks;
+
+		liftENC = 0;
+		liftMotors(RAISE_AMOUNT);
+		while(liftClicks>0)
+		{
+			liftClicks = clicksStart - liftENC;
+		}
+		liftMotors(0);
 	}
-	liftMotors(0);
+	else
+	{
+		while(liftClicks>0)
+		{
+			liftClicks = clicksStart - liftENC;
+		}
+		liftMotors(0);
+	}
 }
-task lowerPartway()
+task liftToPartway()
 {
-	const int RAISE_AMOUNT = -3*maxMotor/4;
 	StopTask(lift);
 	StopTask(lower);
-	int clicksStart = liftClicks;
-
-	liftENC = 0;
-	liftMotors(RAISE_AMOUNT);
-	while(liftClicks>partwayLiftClicks)
+	if(liftClicks > partwayLiftClicks)
 	{
-		liftClicks = clicksStart - liftENC;
+		const int RAISE_AMOUNT = -3*maxMotor/4;
+		if(liftValue>=0) // if above and not already going down
+		{
+			clicksStart = liftClicks;
+			liftENC = 0;
+			liftMotors(RAISE_AMOUNT);
+			while(liftClicks>partwayLiftClicks)
+			{
+				liftClicks = clicksStart - liftENC;
+			}
+			liftMotors(0);
+		}
+		else
+		{
+			while(liftClicks>partwayLiftClicks)
+			{
+				liftClicks = clicksStart - liftENC;
+			}
+			liftMotors(0);
+		}
+
 	}
-	liftMotors(0);
+	else if(liftClicks<partwayLiftClicks)
+	{
+		const int RAISE_AMOUNT = 3*maxMotor/4;
+		if(liftValue>=0) // if below and not already going up
+		{
+			clicksStart = liftClicks;
+			liftENC = 0;
+			liftMotors(RAISE_AMOUNT);
+			while(liftClicks<partwayLiftClicks)
+			{
+				liftClicks = clicksStart + liftENC;
+			}
+			liftMotors(0);
+		}
+		else
+		{
+			while(liftClicks<partwayLiftClicks)
+			{
+				liftClicks = clicksStart + liftENC;
+			}
+			liftMotors(0);
+		}
+	}
 }
 
 void setMovement(int x, int y)
@@ -151,7 +215,7 @@ void pickUpRing()
 }
 void putRingOnPost()
 {
-	StartTask(lowerPartway);
+	StartTask(liftToPartway);
 	wait1Msec(1000);
 	openClaw();
 	wait1Msec(100);

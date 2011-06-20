@@ -11,7 +11,7 @@ void mainLoop()
 	else if(cont8D>0)
 		StartTask(lower);
 	else if(cont8R>0)
-		StartTask(lowerPartway);
+		StartTask(liftToPartway);
 	// claw control
 	if(cont7L>0)
 		openClaw();

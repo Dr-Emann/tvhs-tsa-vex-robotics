@@ -19,4 +19,6 @@ static int const shakeTime = 7000;			// determines the number of milliseconds th
 static int const clawClosedPos = 55;
 
 static int const clawOpenPos = -10;
+
+static bool useSlowClawMotion = false;
 #endif

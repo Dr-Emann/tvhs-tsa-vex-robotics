@@ -216,7 +216,7 @@ task autonMode()
 	followLineUntilBump();
 
 	pickUpRing();
-	wait1Msec(150); // Give some time for lift to start, hopefuly avoid collision
+	wait1Msec(800); // Give some time for lift to start, hopefuly avoid collision
 
 	followLineUntilBump();
 

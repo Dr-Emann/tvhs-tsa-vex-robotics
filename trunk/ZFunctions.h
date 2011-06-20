@@ -27,22 +27,43 @@ void turnInPlace(const float fTurn)	{ turnInPlace((int)(fTurn*maxMotor)); }
 void backward(const int nBackward)	{ forward(-nBackward); }
 void backward(const float fBackward){ forward((int)(-maxMotor*fBackward)); }
 
-bool clawOpen() {	return clawL == -10; }
+bool clawIsOpen() {	return clawL < clawClosedPos; }
 void openClaw()
 {
-	const int openAmount = 10;
 	if(useSlowClawMotion)
 	{
-		while(abs(clawL-openAmount)>5 && abs(clawR+openAmount)>5)
+		while(abs(clawL-clawOpenPos)>5 && abs(clawR+clawOpenPos)>5)
 		{
-			clawL -= abs(clawL-openAmount)/2;
-			clawR += abs(clawR+openAmount)/2;
+			clawL -= abs(clawL-clawOpenPos)/2;
+			clawR += abs(clawR+clawOpenPos)/2;
 		}
 	}
-	clawL = -openAmount; clawR = openAmount;
-
+	clawL = -clawOpenPos; clawR = clawOpenPos;
 }
-void closeClaw(){	clawL = clawClosedPos; clawR = -clawClosedPos; }
+void closeClaw()
+{
+	if(useSlowClawMotion)
+	{
+		while(abs(clawL-clawClosedPos)>5 && abs(clawR+clawClosedPos)>5)
+		{
+			clawL -= abs(clawL-clawClosedPos)/2;
+			clawR += abs(clawR+clawClosedPos)/2;
+		}
+	}
+	clawL = clawClosedPos; clawR = -clawClosedPos;
+}
+void wideOpenClaw()
+{
+	if(useSlowClawMotion)
+	{
+		while(abs(clawL-clawWideOpenPos)>5 && abs(clawR+clawWideOpenPos)>5)
+		{
+			clawL -= abs(clawL-clawWideOpenPos)/2;
+			clawR += abs(clawR+clawWideOpenPos)/2;
+		}
+	}
+	clawL = clawWideOpenPos; clawR = -clawWideOpenPos;
+}
 
 task lower();
 task lowerPartway();

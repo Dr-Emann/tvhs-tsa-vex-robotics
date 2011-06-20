@@ -16,9 +16,11 @@ static int const turnAmount = 1200;			// determines how far robot will turn in a
 
 static int const shakeTime = 7000;			// determines the number of milliseconds the robot will shake after turning, trying to find the line again. (1000 ms = 1 sec)
 
-static int const clawClosedPos = 55;
+static int const clawOpenPos = 55;
 
-static int const clawOpenPos = -10;
+static int const clawClosedPos = -10;
 
-static bool useSlowClawMotion = false;
+static int const clawWideOpenPos = 70;
+
+static bool useSlowClawMotion = false;	// if true, will slow down the claw open and close motion
 #endif

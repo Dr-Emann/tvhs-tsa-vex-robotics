@@ -1,7 +1,7 @@
 #ifndef CHANGEABLE_CONSTANTS_H
 #define CHANGEABLE_CONSTANTS_H
 
-static bool const runAutonMode = false;	// If you want to disable autonomous mode, set this to false
+static bool const runAutonomous = false;	// If you want to disable autonomous mode, set this to false
 
 static bool const liftStartsAtTop = false;// If the lift starts at the top, set to true, if lift starts at bottom, set to false
 

@@ -21,6 +21,13 @@
 #define cont6D vexRT[Btn6D]
 #define cont7L vexRT[Btn7L]
 #define cont7R vexRT[Btn7R]
+#define cont7U vexRT[Btn7U]
+#define cont7D vexRT[Btn7D]
+#define cont8U vexRT[Btn8U]
+#define cont8D vexRT[Btn8D]
+#define cont8R vexRT[Btn8R]
+#define cont8L vexRT[Btn8L]
+
 
 /*
  * uncomment for old controler

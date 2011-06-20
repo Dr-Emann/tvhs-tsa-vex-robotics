@@ -1,0 +1,23 @@
+//////////////////////
+////Connection map////
+//////////////////////
+
+Motors/Outputs
+	Left Drive Motor				Port 2
+	Right Drive Motor				Port 3
+	Left Servo Claw					Port 6
+	Right Servo Claw				Port 7
+	Left Lift Motor					Port 8
+	Right Lift Motor				Port 9
+	
+Inputs
+	Left Line Follower				Analog	Port 1
+	Right Line Follower				Analog	Port 2
+	Lift Rotation Sensor			Digital	Port 1
+	Claw Bump Sensor				Digital	Port 2
+	
+Controller Mappings
+	Axis 1 and 2 (Right Stick)					Control the movement of the drive motors
+	Axis 4 (Left Stick L/R)						Open/close claw (shouldn't open past default position, but be careful closing, no limit there)
+	Axis 5 (Back Buttons)						Raise/lower lift, do some testing, see if it works
+	Axis 6 (Back Buttons)						Up is the kill switch, will stop everything, stop all motors, etc

@@ -17,7 +17,13 @@ Inputs
 	Claw Bump Sensor				Digital	Port 2
 	
 Controller Mappings
-	Axis 1 and 2 (Right Stick)					Control the movement of the drive motors
-	Axis 4 (Left Stick L/R)						Open/close claw (shouldn't open past default position, but be careful closing, no limit there)
-	Axis 5 (Back Buttons)						Raise/lower lift, do some testing, see if it works
-	Axis 6 (Back Buttons)						Up is the kill switch, will stop everything, stop all motors, etc
+	Axis 1 and 2 (Right Stick)		Control the movement of the drive motors
+	
+	Button 6U (Back Right U)		Kill switch, stops autonomous mode, stops lifts, stops claw
+	
+	Button 7L (Left D-Pad L)		Open Claw
+	Button 7R (Left D-Pad R)		Close Claw
+	
+	Button 8U (Right D-Pad U)		Raise Lift
+	Button 8R (Right D-Pad R)		Lower Lift to level of dropping rings
+	Button 8D (Right D-Pad D)		Lower Lift all the way (from either top or mid-way)

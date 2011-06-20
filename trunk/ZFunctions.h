@@ -28,7 +28,20 @@ void backward(const int nBackward)	{ forward(-nBackward); }
 void backward(const float fBackward){ forward((int)(-maxMotor*fBackward)); }
 
 bool clawOpen() {	return clawL == -10; }
-void openClaw()	{ clawL = -10; clawR = 10; }
+void openClaw()
+{
+	const int openAmount = 10;
+	if(useSlowClawMotion)
+	{
+		while(abs(clawL-openAmount)>5 && abs(clawR+openAmount)>5)
+		{
+			clawL -= abs(clawL-openAmount)/2;
+			clawR += abs(clawR+openAmount)/2;
+		}
+	}
+	clawL = -openAmount; clawR = openAmount;
+
+}
 void closeClaw(){	clawL = clawClosedPos; clawR = -clawClosedPos; }
 
 task lower();

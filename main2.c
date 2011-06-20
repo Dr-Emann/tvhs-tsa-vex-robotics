@@ -12,6 +12,7 @@
 
 #include "ChangableConstants.h"
 #include "ZFunctions.h"
+#include "ZController.h"
 
 task main()
 {

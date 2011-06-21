@@ -1,6 +1,8 @@
 #ifndef Z_HEADER_H
 #define Z_HEADER_H
 
+#define until(x) while(!(x))
+
 #define leftMotor motor[motor_L]
 #define rightMotor motor[motor_R]
 #define liftMotor1 motor[motor_lift_L]

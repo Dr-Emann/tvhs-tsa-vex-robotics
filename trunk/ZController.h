@@ -1,6 +1,6 @@
 #ifndef Z_CONTROLLER_H
 #define Z_CONTROLLER_H 1
-
+static bool override = false;
 void mainLoop()
 {
 	setMovement(cont1,cont2);
@@ -21,10 +21,17 @@ void mainLoop()
 	if(cont3>120)
 	{
 		liftMotors(50);
+		override=true;
 	}
 	else if(cont3<-120)
 	{
 		liftMotors(-50);
+		override = true;
+	}
+	else if(cont3<=120 && cont3>=-120 && override == true)
+	{
+		liftMotors(0);
+		override = false;
 	}
 	//kill switch
 	if(cont6D>0)

@@ -32,18 +32,6 @@ void openClaw()
 {
 	if(useSlowClawMotion)
 	{
-		while(abs(clawL-clawOpenPos)>5 && abs(clawR+clawOpenPos)>5)
-		{
-			clawL -= abs(clawL-clawOpenPos)/2;
-			clawR += abs(clawR+clawOpenPos)/2;
-		}
-	}
-	clawL = -clawOpenPos; clawR = clawOpenPos;
-}
-void closeClaw()
-{
-	if(useSlowClawMotion)
-	{
 		while(abs(clawL-clawClosedPos)>5 && abs(clawR+clawClosedPos)>5)
 		{
 			clawL -= abs(clawL-clawClosedPos)/2;
@@ -51,6 +39,18 @@ void closeClaw()
 		}
 	}
 	clawL = clawClosedPos; clawR = -clawClosedPos;
+}
+void closeClaw()
+{
+	if(useSlowClawMotion)
+	{
+		while(abs(clawL-clawOpenPos)>5 && abs(clawR+clawOpenPos)>5)
+		{
+			clawL -= abs(clawL-clawOpenPos)/2;
+			clawR += abs(clawR+clawOpenPos)/2;
+		}
+	}
+	clawL = -clawOpenPos; clawR = clawOpenPos;
 }
 void wideOpenClaw()
 {

@@ -14,7 +14,12 @@ void mainLoop()
 		StartTask(liftToPartway);
 	// claw control
 	if(cont7L>0)
-		openClaw();
+	{
+		if(liftClicks>=partwayLiftClicks-1)
+			wideOpenClaw();
+		else
+			openClaw();
+	}
 	else if(cont7R>0)
 		closeClaw();
 	// manual override for lift

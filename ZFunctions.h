@@ -86,7 +86,7 @@ task lift()
 		{
 			liftClicks = clicksStart + liftENC;
 		}
-		liftMotors(0);
+		liftMotors(20);
 	}
 	else
 	{

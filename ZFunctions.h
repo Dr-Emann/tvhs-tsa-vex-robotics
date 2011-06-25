@@ -27,7 +27,8 @@ void turnInPlace(const float fTurn)	{ turnInPlace((int)(fTurn*maxMotor)); }
 void backward(const int nBackward)	{ forward(-nBackward); }
 void backward(const float fBackward){ forward((int)(-maxMotor*fBackward)); }
 
-bool clawIsOpen() {	return clawL < clawClosedPos; }
+bool clawIsOpen() {	return clawL > clawClosedPos; }
+bool clawIsWideOpen() { return clawL > clawOpenPos; }
 void openClaw()
 {
 	if(useSlowClawMotion)
@@ -38,7 +39,7 @@ void openClaw()
 			clawR += abs(clawR+clawClosedPos)/2;
 		}
 	}
-	clawL = clawClosedPos; clawR = -clawClosedPos;
+	clawL = clawOpenPos; clawR = -clawOpenPos;
 }
 void closeClaw()
 {
@@ -50,7 +51,7 @@ void closeClaw()
 			clawR += abs(clawR+clawOpenPos)/2;
 		}
 	}
-	clawL = -clawOpenPos; clawR = clawOpenPos;
+	clawL = clawClosedPos; clawR = -clawClosedPos;
 }
 void wideOpenClaw()
 {
@@ -104,6 +105,8 @@ task lower()
 	StopTask(lift);
 	StopTask(liftToPartway);
 
+	if(clawIsWideOpen())
+		openClaw();
 
 	if(liftValue>=0)
 	{
@@ -111,19 +114,21 @@ task lower()
 
 		liftENC = 0;
 		liftMotors(RAISE_AMOUNT);
-		while(liftClicks>0)
+		while(liftClicks>30)
 		{
 			liftClicks = clicksStart - liftENC;
 		}
 		liftMotors(0);
+		liftClicks= 0;
 	}
 	else
 	{
-		while(liftClicks>0)
+		while(liftClicks>30)
 		{
 			liftClicks = clicksStart - liftENC;
 		}
 		liftMotors(0);
+		liftClicks = 0;
 	}
 }
 task liftToPartway()
@@ -181,6 +186,7 @@ task liftToPartway()
 
 void setMovement(int x, int y)
 {
+	/*
 	int left = y+x;
 	int right = y-x;
 	if(abs(left)>maxMotor)
@@ -189,19 +195,26 @@ void setMovement(int x, int y)
 		left -= (right-maxMotor);
 	leftMotor = left;
 	rightMotor = right;
-	/*
-	*Keeping in case previus code does not work
-	**		leftMotor = y/2 + x/2;		//y-axis value: forward/backward motion
-	**		rightMotor = y/2 - x/2;		//x-axis value: left/right steering
 	*/
+
+	//Keeping in case previus code does not work
+	leftMotor = y/2 + x/2;		//y-axis value: forward/backward motion
+	rightMotor = y/2 - x/2;		//x-axis value: left/right steering
+
 }
 bool whiteOnLeft()
 {
-	return lineL<whiteLevel;
+	if(darkOnWhite)
+		return lineL>whiteLevel;
+	else
+		return lineL<whiteLevel;
 }
 bool whiteOnRight()
 {
-	return lineR<whiteLevel;
+	if(darkOnWhite)
+		return lineR>whiteLevel;
+	else
+		return lineR<whiteLevel;
 }
 bool seeingWhite()
 {
@@ -213,16 +226,21 @@ void pickUpRing()
 	wait1Msec(200);
 	StartTask(lift);
 }
+task dropRingOnPost()
+{
+	if(abs(liftClicks-maxLiftClicks) < 4)
+	{
+		StartTask(liftToPartway);
+		wait1Msec(800);
+		wideOpenClaw();
+		wait1Msec(750);
+	}
+}
 void putRingOnPost()
 {
 	StartTask(liftToPartway);
 	wait1Msec(1000);
-	openClaw();
-	wait1Msec(100);
-	backward(maxMotor);
-	wait1Msec(2000);
-	closeClaw();
-	StartTask(lower);
+	wideOpenClaw();
 }
 bool wiggle(bool const goRight, int const nMSec = shakeTime)
 {
@@ -230,9 +248,9 @@ bool wiggle(bool const goRight, int const nMSec = shakeTime)
 	while(!seeingWhite() && time1[T2]<nMSec)
 	{
 		if(goRight)
-			setMovement(maxMotor*sin(2*PI/nMSec*time1[T2]),3*maxMotor/4);
+			setMovement(maxMotor/4*sin(32*PI/nMSec*time1[T2]),3*maxMotor/4);
 		else
-			setMovement(-maxMotor*sin(2*PI/nMSec*time1[T2]),3*maxMotor/4);
+			setMovement(-maxMotor/4*sin(32*PI/nMSec*time1[T2]),3*maxMotor/4);
 	}
 	forward(0);
 	return seeingWhite();
@@ -259,31 +277,155 @@ void followLineUntilBump()
 			setMovement(maxMotor/4, 3*maxMotor/4);
 		}
 	}
+	forward(0);
 }
 task autonomous()
 {
-	bool const goRight = true;
-	int const maxTime = 8000;
+	/* old autonomous code
+	StartTask(lift);
+	wait1Msec(1500);
+	int const maxTime = 5000;
 	time1[T2] = 0;
 	forward(maxMotor);
+	while(seeingWhite()&& time1[T2]<maxTime);
 	while(!seeingWhite() && time1[T2]<maxTime);// wait untill white is seen or time is up
 	if(!seeingWhite()) return; // if no line found in time, exit to prevent robot damage
 
 	if(goRight)
-		setMovement(maxMotor/4, 3*maxMotor/4);
+		turnInPlace(-maxMotor/2);
 	else
-		setMovement(-maxMotor/4, 3*maxMotor/4);
+		turnInPlace(maxMotor/2);
 	wait1Msec(turnAmount);// turn for turn amount
-
+	forward(0);
 	if(!wiggle(goRight,shakeTime)) return; // if no line found, exit to prevent robot damage
 
 	followLineUntilBump();
+	if(clawBumpL&& !clawBumpR)
+	{
 
-	pickUpRing();
-	wait1Msec(800); // Give some time for lift to start, hopefuly avoid collision
+	}
+	else if(clawBumpR && !clawBumpL)
+	{
 
-	followLineUntilBump();
+	}
+	backward(maxMotor/2);
+	wait1Msec(400);
+	backward(0);
+	putRingOnPost();
+	wait1Msec(200);
+	backward(maxMotor);
+	wait1Msec(700);
+	backward(0);
+	StartTask(lower);
+	*/
+
+
+	/* Goodish Code
+	StartTask(lift);
+	wait1Msec(2000);
+	backward(maxMotor);
+	wait1Msec(800);
+	forward(1*maxMotor/4);
+	while(!clawBump);
+	forward(0);
+	if(clawBumpL)
+		turnInPlace(maxMotor/4);
+	else if(clawBumpR)
+		turnInPlace(-maxMotor/4);
+	wait1Msec(175);
+	backward(maxMotor);
+	wait1Msec(220);
+	backward(0);
 
 	putRingOnPost();
+	wait1Msec(1000);
+	backward(maxMotor);
+	wait1Msec(500);
+	backward(0);
+	StartTask(lower);
+	*/
+	/* GOOD CODE
+	openClaw();
+	forward(maxMotor/3);
+	wait1Msec(1110);
+	forward(0);
+	wait1Msec(150);
+	closeClaw();
+	StartTask(lift);
+	wait1Msec(1800);
+	turnInPlace((goRight)?(maxMotor/2):(-maxMotor/2));
+	wait1Msec(398);
+	forward(0);
+
+	forward(1*maxMotor/3);
+	while(!clawBump);
+	forward(0);
+	if(clawBumpL)
+		turnInPlace(maxMotor/4);
+	else if(clawBumpR)
+		turnInPlace(-maxMotor/4);
+	wait1Msec(175);
+	backward(maxMotor);
+	wait1Msec(138);
+	backward(0);
+	wait1Msec(150);
+	putRingOnPost();
+	wait1Msec(1000);
+	backward(maxMotor);
+	wait1Msec(600);
+	backward(0);
+	StartTask(lower);
+	*/
+	openClaw();
+	forward(maxMotor/3);
+	wait1Msec(1000);
+	forward(maxMotor/5);
+	wait1Msec(400);
+	forward(0);
+	wait1Msec(150);
+	closeClaw();
+	wait1Msec(150);
+	StartTask(lift);
+	wait1Msec(1600);
+	turnInPlace((goRight)?(-maxMotor/2):(maxMotor/2));
+	wait1Msec(480);
+	forward(0);
+
+	forward(1*maxMotor/3);
+	while(!clawBump);
+	forward(0);
+	if(clawBumpL)
+		setMovement(-maxMotor/3,maxMotor/2);
+	else if(clawBumpR)
+		setMovement(maxMotor/3,maxMotor/2);
+
+	time1[T3] = 0;
+	while(!(clawBumpL && clawBumpR) && time1[T3] < 2000)
+	{
+		leftMotor +=1;
+		rightMotor += 1;
+	}
+	backward(maxMotor);
+	wait1Msec(260);
+	backward(0);
+	wait1Msec(150);
+	putRingOnPost();
+	wait1Msec(1000);
+	const int RING_TURN_AMT = 73;
+	if(goRight)
+		setMovement(-RING_TURN_AMT, -maxMotor);
+	else
+		setMovement(RING_TURN_AMT,-maxMotor);
+	wait1Msec(3000);
+	forward(maxMotor);
+	wait1Msec(400);
+	forward(0);
+	if(goRight)
+		turnInPlace(-maxMotor/2);
+	else
+		turnInPlace(maxMotor/2);
+	wait1Msec(1000);
+	forward(0);
+	StartTask(lower);
 }
 #endif

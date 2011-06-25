@@ -2,7 +2,7 @@
 
 ===Motors/Outputs===
 
-|| Left Drive Motor || Port 2||
+|| Left Drive Motor || Port 2 ||
 || Right Drive Motor || Port 3 ||
 || Left Servo Claw || Port 6 ||
 || Right Servo Claw || Port 7 ||
@@ -11,10 +11,9 @@
 
 ===Inputs===
 
-|| Left Line Follower || Analog Port 1 ||
-|| Right Line Follower || Analog Port 2 ||
 || Lift Rotation Sensor || Digital Port 1 ||
-|| Claw Bump Sensor || Digital Port 2 ||
+|| Left Claw Bump Sensor || Digital Port 2 ||
+|| Right Claw Bump Sensor || Digital Port 3 ||
 
 ===Controller Mappings===
 

@@ -1,7 +1,8 @@
 #pragma config(Sensor, in1,    lineFollower_L,      sensorLineFollower)
 #pragma config(Sensor, in2,    lineFollower_R,      sensorLineFollower)
 #pragma config(Sensor, dgtl1,  enc_lift,            sensorRotation)
-#pragma config(Sensor, dgtl2,  bump_claw,           sensorTouch)
+#pragma config(Sensor, dgtl2,  bump_claw_1,         sensorTouch)
+#pragma config(Sensor, dgtl3,  bump_claw_2,    sensorTouch)
 #pragma config(Motor,  port2,           motor_L,       tmotorNormal, openLoop)
 #pragma config(Motor,  port3,           motor_R,       tmotorNormal, openLoop, reversed)
 #pragma config(Motor,  port6,           servo_claw_L,  tmotorServoStandard, openLoop)
@@ -17,7 +18,7 @@
 task main()
 {
 	liftENC = 0;
-	openClaw();
+	closeClaw();
 	liftClicks = (liftStartsAtTop)?maxLiftClicks:0;
 	if(runAutonomous)
 	{

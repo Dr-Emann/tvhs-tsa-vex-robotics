@@ -42,9 +42,11 @@
 */
 
 #define liftENC SensorValue[enc_lift]
-#define clawBump SensorBoolean[bump_claw]
+#define clawBumpL SensorBoolean[bump_claw_1]
+#define clawBumpR SensorBoolean[bump_claw_2]
 #define lineL SensorValue(lineFollower_L)
 #define lineR SensorValue(lineFollower_R)
+#define clawBump (SensorBoolean[bump_claw_1] || SensorBoolean[bump_claw_2])
 
 const static int maxMotor = 127;
 #endif

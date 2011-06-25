@@ -12,6 +12,8 @@ void mainLoop()
 		StartTask(lower);
 	else if(cont8R>0)
 		StartTask(liftToPartway);
+	else if(cont8L>0)
+		StartTask(dropRingOnPost);
 	// claw control
 	if(cont7L>0)
 	{
@@ -25,12 +27,12 @@ void mainLoop()
 	// manual override for lift
 	if(cont3>120)
 	{
-		liftMotors(50);
+		liftMotors(80);
 		override=true;
 	}
 	else if(cont3<-120)
 	{
-		liftMotors(-50);
+		liftMotors(-80);
 		override = true;
 	}
 	else if(cont3<=120 && cont3>=-120 && override == true)

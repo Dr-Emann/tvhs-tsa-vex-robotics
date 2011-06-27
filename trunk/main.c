@@ -38,7 +38,19 @@ void pre_auton()
 {
 	liftENC = 0;
 	openClaw();
-	liftClicks = (liftStartsAtTop)?maxLiftClicks:0;
+	if(liftStartsAtTop)
+	{
+		liftClicks = maxLiftClicks;
+	}
+	else
+	{
+		liftClicks = 0;
+	}
+	// Just a note, entire if/else statement could be writen as: 
+	// liftClicks = (liftStartsAtTop)?maxLiftClicks:0;
+	//
+	// i.e. variable = (true/false statement)?ifTrue:ifFalse;
+	// thus, if the true/false statement is true, variable will be set to ifTrue, otherwise, it will be set to ifFalse.
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -55,6 +67,10 @@ task usercontrol()
 	// User control code here, inside the loop
 	while (true)
 	{
-		mainLoop();
+		/*
+		 * Isolated user control code that should be run constantly to check for buttons on controller
+		 * 	so that it could be re-used, in this file and main2.c 
+		 */
+		mainLoop(); 
 	}
 }

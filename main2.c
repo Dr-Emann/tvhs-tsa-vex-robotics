@@ -19,7 +19,11 @@ task main()
 {
 	liftENC = 0;
 	closeClaw();
-	liftClicks = (liftStartsAtTop)?maxLiftClicks:0;
+	if(liftStartsAtTop)
+		liftClicks = maxLiftClicks;
+	else
+		liftClicks = 0;
+
 	if(runAutonomous)
 	{
 		StartTask(autonomous);

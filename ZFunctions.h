@@ -1,5 +1,14 @@
-#ifndef Z_FUNCTIONS_H
-#define Z_FUNCTIONS_H 1
+/*
+ * The purpose of this file is to provide the functions and tasks that the robot uses.
+ * I tried to make a function for everything I wanted the robot to be able to do, even if they were redundant
+ * (i.e. because backward is just going forward with a negitive speed, i could have not used backward, only forward. However, having a seperate backwards function made the code much more readable)
+ *
+ * IMPORTANT NOTE: Notice that the functions go from most simple to most complex. This is nessisary, because RobotC works from top to bottom. You cannot use a variable or function unless it is
+ *  declared above. For example, I could not have put the backward function before the forward function, because backward uses
+ *
+ * I seperated this file because it contains the basic functions and tasks which other functions (i.e. mainLoop) can use.
+ */
+
 #include "ZHeader.h"
 
 static int liftClicks = 0; // keeps track of the position of the lift. 0 means bottom of lift, maxLiftClicks means the top.
@@ -15,7 +24,10 @@ void forward(const int nForward)// const just says that you wont change nForward
 	leftMotor = nForward;
 	rightMotor = nForward;
 }
-void backward(const int nBackward) { forward(-nBackward); }
+void backward(const int nBackward)
+{
+  forward(-nBackward);
+}
 void turnInPlace(const int nTurn)
 {
 	leftMotor = -nTurn;
@@ -23,7 +35,7 @@ void turnInPlace(const int nTurn)
 }
 
 bool clawIsOpen() {	return clawL > clawClosedPos; } // if clawL is greater than (not equal to) clawClosedPos, will return true, else will return false
-bool clawIsWideOpen() { return clawL > clawOpenPos; }
+bool clawIsWideOpen() { return clawL > clawOpenPos; } // if clawL is further open than just open, it must be wide open.
 
 void openClaw() // was not able to reverse a servo, so had to reverse all changes to one side of the claw
 {
@@ -47,17 +59,28 @@ task lower(); 			// have to pre-declare these tasks, because lift uses them, and
 task liftToPartway();	// later in the code
 task lift()
 {
+  // NOTE: Usually, I name constant variables, that will not, and CANNOT change with all caps, and undescores if it is more than one word.
+  //      a non constant variable, I name with a lowercase first letter, and an upper case letter for the begining of each subsequent word:
+  //          i.e.  const int THIS_VARIABLE_IS_CONSTANT;
+  //                int thisVariableIsNotConstant;
 	const int RAISE_AMOUNT = maxMotor; // deturmines the speed of the motors while lifting. Set here to maximum power.
+
+	// If we're trying to lift, we don't want to be lowering or only lifting partway.
 	StopTask(lower);
 	StopTask(liftToPartway);
 
 	if(liftValue<=0) // if the lift is not already going up (liftValue is the velocity of the lift)
 	{
-		clicksStart = liftClicks;
+		clicksStart = liftClicks; // it starts at the current position (liftClicks)
 
-		liftENC = 0;
+		liftENC = 0;// reset the value of the encoder back to zero at the begining of the lifting operation.
 
-		liftMotors(RAISE_AMOUNT);
+		liftMotors(RAISE_AMOUNT); // set the motors to start lifting at RAISE_AMOUNT
+		// while the current position(liftClicks) is still less than the target (maxLiftClicks, the top), set the current position to the start position plus the amount of clicks
+		// the encoder has recorded since the task was started (we reset it to zero at the begining)
+		// i.e. if we started at the bottom, clicks start will equal zero. Until we get to the top, it will update the current position to be the start plus how many it's moved since
+		// the start.
+		// if we started at 50, and we've gone 10 clicks since the start, liftClicks will be set to 60, and will keep increasing because the motor is still running.
 		while(liftClicks<maxLiftClicks)
 		{
 			liftClicks = clicksStart + liftENC;
@@ -82,7 +105,7 @@ task lower()
 	StopTask(lift);
 	StopTask(liftToPartway);
 
-	if(clawIsWideOpen()) // check if the claw is too far open for the
+	if(clawIsWideOpen()) // check if the claw is too far open, if it is, set it to only partly open, instead of wide open.
 		openClaw();
 
 	if(liftValue>=0)
@@ -108,6 +131,9 @@ task lower()
 		liftClicks = 0;
 	}
 }
+/**
+ * Either lifts or lowers the lift to the point just above the peg.
+ */
 task liftToPartway()
 {
 	StopTask(lift);
@@ -161,12 +187,14 @@ task liftToPartway()
 	}
 }
 
+// sets the movement of the drive motors based on a joystick's x and y coorinates.
 void setMovement(int x, int y)
 {
 	leftMotor = y/2 + x/2;		//y-axis value: forward/backward motion
 	rightMotor = y/2 - x/2;		//x-axis value: left/right steering
 }
 
+// Sets all motors to stop, and closes the claw (safest position)
 void stopAllMotors()
 {
 	leftMotor=0;
@@ -175,22 +203,10 @@ void stopAllMotors()
 	closeClaw();
 }
 
-bool whiteOnLeft()
-{
-	return lineL<whiteLevel;
-}
-bool whiteOnRight()
-{
-	return lineR<whiteLevel;
-}
-bool seeingWhite()
-{
-	return whiteOnLeft()|| whiteOnRight(); // returns true if either sensor reads a white line
-}
 void pickUpRing()
 {
 	closeClaw();
-	wait1Msec(200); // let servo reach specified position
+	wait1Msec(200); // let servo reach specified position, even though the position can be set immediately, it takes a few milliseconds for the claw to actually close.
 	StartTask(lift);
 }
 task dropRingOnPost()
@@ -211,141 +227,3 @@ void putRingOnPost() 	// lowers all the way before opening claw, must only be us
 	wait1Msec(1000);
 	wideOpenClaw();
 }
-bool wiggle(bool const goRight, int const nMSec = shakeTime) 	// can define a default value for a parameter. i.e, wiggle can be called as:
-																//		wiggle(true);
-																//		wiggle(true, shakeTime);
-																//		wiggle(false, 700);
-																// the first two of those being equivielent statements
-{
-	time1[T2] = 0;
-	while(!seeingWhite() && time1[T2]<nMSec)
-	{
-		if(goRight)
-			setMovement(maxMotor/4*sin(32*PI/nMSec*time1[T2]),3*maxMotor/4);
-		else
-			setMovement(-maxMotor/4*sin(32*PI/nMSec*time1[T2]),3*maxMotor/4);
-	}
-	forward(0);
-	return seeingWhite();
-}
-/**
-*	pre-condition:	white line between two light sensors
-*	post-coindtion:	white line between sensors,
-*/
-void followLineUntilBump()
-{
-	int const speed = maxMotor;
-	while(!clawBump)
-	{
-		while( (!seeingWhite()) && !clawBump )
-		{
-			forward(speed);
-		}
-		while( (whiteOnLeft()) && !clawBump )
-		{
-			setMovement(-maxMotor/4,3*maxMotor/4);
-		}
-		while( (whiteOnRight()) && !clawBump )
-		{
-			setMovement(maxMotor/4, 3*maxMotor/4);
-		}
-	}
-	forward(0);
-}
-task autonomous()
-{
-	/*
-	 * open the claw and move forward, timed to pick up rings
-	 * slows down when close to avoid knocking rings over
-	 * waits for a short time after stoping to allow for momentum to stop
-	 */
-	openClaw();
-	forward(maxMotor/3);
-	wait1Msec(1000);
-	forward(maxMotor/5);
-	wait1Msec(400);
-	forward(0);
-	wait1Msec(150);
-
-	/*
-	 * picks up rings, and waits for lift to reach the top
-	 */
-	pickUpRing();
-	wait1Msec(1600);
-
-	/*
-	 * turns toward post, going right or left, depending on team color,
-	 * if on blue team, will go right, red will go left
-	 */
-	if(goRight)
-		turnInPlace(-maxMotor/2);
-	else
-		turnInPlace(maxMotor/2);
-	wait1Msec(480);
-	forward(0);
-
-	/*
-	 * go forward slowly until one of the claw bump sensors are hit
-	 */
-	forward(1*maxMotor/3);
-	while(!clawBump);
-	forward(0);
-
-	/*
-	 * it is assumed that only one claw sensor is being hit currently,
-	 * so which ever one is being hit, it trys to move forward in an arc that will try to get the other
-	 * sensor to hit also
-	 */
-	if(clawBumpL)
-		setMovement(-maxMotor/3,maxMotor/2);
-	else if(clawBumpR)
-		setMovement(maxMotor/3,maxMotor/2);
-
-	/*
-	 * the robot goes forward with incresing power until both sensors are hit or until time runs out.
-	 * it then backs up, just enough to line the rings up with the post, since the switches are mounted behind the claw
-	 */
-	time1[T3] = 0;
-	while(!(clawBumpL && clawBumpR) && time1[T3] < 2000)
-	{
-		leftMotor +=1;
-		rightMotor += 1;
-	}
-	backward(maxMotor);
-	wait1Msec(260);
-	backward(0);
-	wait1Msec(150);
-
-	/*
-	 * puts ring on post, and waits for lift to lower and such
-	 */
-	putRingOnPost();
-	wait1Msec(1000);
-
-	/*
-	 * moves backward, with a slight turn, in order to knock over the stack of opponent rings
-	 * direction of turning is dependant on team color
-	 */
-	const int RING_TURN_AMT = 73;
-	if(goRight)
-		setMovement(-RING_TURN_AMT, -maxMotor);
-	else
-		setMovement(RING_TURN_AMT,-maxMotor);
-	wait1Msec(3000);
-
-	/*
-	 * after knocking over opponent's rings, moves forward and turns back toward playing field, then lowers the lift all the way,
-	 * to prepare for user control mode
-	 */
-	forward(maxMotor);
-	wait1Msec(400);
-	forward(0);
-	if(goRight)
-		turnInPlace(-maxMotor/2);
-	else
-		turnInPlace(maxMotor/2);
-	wait1Msec(1000);
-	forward(0);
-	StartTask(lower);
-}
-#endif

@@ -4,6 +4,8 @@
 #define clawBumpL SensorBoolean[bump_claw_1]
 #define clawBumpR SensorBoolean[bump_claw_2]
 #define cont5U vexRT[Btn5U]
+#define doublePressTimer time1[T4]
+
 static bool wasUpLastTime5U = true;
 static int numberOfButtonPresses5U = 0;
 static bool wasUpLastTime5D = true;
@@ -18,7 +20,7 @@ static int numberOfButtonPresses5D = 0;
 void mainLoop()
 {
 	const int MAX_DOUBLE_PRESS_TIME = 200; // This code sets the maximum amount of time between button presses to be registered, in milliseconds.
-	if(time1[T4] > MAX_DOUBLE_PRESS_TIME)
+	if(doublePressTimer > MAX_DOUBLE_PRESS_TIME)
 	{
 		numberOfButtonPresses5U = 0; // If the timer expires, reset the number of buttons presses to zero.
 	}
@@ -29,7 +31,7 @@ void mainLoop()
 		if(wasUpLastTime5U)
 		{
 			numberOfButtonPresses5D = 0; // We must reset the number of button presses for every other button tracked.
-			time1[T4] = 0;
+			doublePressTimer = 0;
 			numberOfButtonPresses5U++; // Add one to the recorded number of button presses
 		}
 	}
@@ -44,7 +46,7 @@ void mainLoop()
 		if(wasUpLastTime5D)
 		{
 			numberOfButtonPresses5U = 0;
-			time1[T4] = 0;
+			doublePressTimer = 0;
 			numberOfButtonPresses5D++;
 		}
 	}

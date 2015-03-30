@@ -17,32 +17,32 @@
 
 task main()
 {
-	liftENC = 0;
-	closeClaw();
-	if(liftStartsAtTop)
-		liftClicks = maxLiftClicks;
-	else
-		liftClicks = 0;
+    liftENC = 0;
+    closeClaw();
+    if(liftStartsAtTop)
+        liftClicks = maxLiftClicks;
+    else
+        liftClicks = 0;
 
-	// If runAutonomous is set to true in ChangeableConstants.h
-	if(runAutonomous)
-	{
-		StartTask(autonomous);
-		time1[T4] = 0;// reset timer 4
-		while(time1[T4]<20000)// Keep checking for the killswitch durring autonomous mode.
-		{
-			if(cont6D>0)// If the killswitch is pressed durring autonomus, kill autonomous, and break out of the while loop.
-			{
-				StopTask(autonomous);
-				break;// Break cancels a loop.
-			}
-		}
-		StopTask(autonomous);// After 20 seconds on the timer, stop the task.
-	}
+    // If runAutonomous is set to true in ChangeableConstants.h
+    if(runAutonomous)
+    {
+        StartTask(autonomous);
+        time1[T4] = 0;// reset timer 4
+        while(time1[T4]<20000)// Keep checking for the killswitch durring autonomous mode.
+        {
+            if(cont6D>0)// If the killswitch is pressed durring autonomus, kill autonomous, and break out of the while loop.
+            {
+                StopTask(autonomous);
+                break;// Break cancels a loop.
+            }
+        }
+        StopTask(autonomous);// After 20 seconds on the timer, stop the task.
+    }
 
-	// After maybe running autonomous, loop through user control.
-	while(true)
-	{
-		mainLoop();
-	}
+    // After maybe running autonomous, loop through user control.
+    while(true)
+    {
+        mainLoop();
+    }
 }

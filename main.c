@@ -50,46 +50,46 @@
 void pre_auton()
 {
   // Set the difference from lift's current height to its old height to zero (it's at its previous height)
-	liftENC = 0;
-	// Open the claw
-	openClaw();
+    liftENC = 0;
+    // Open the claw
+    openClaw();
 
-	// liftStartsAtTop is in ChangeableConstants. Depending on if it is true or false,
-	// set liftClicks(the current position of the lift) to either the maximum or minimum value.
-	if(liftStartsAtTop)
-	{
-		liftClicks = maxLiftClicks;
-	}
-	else
-	{
-		liftClicks = 0;
-	}
-	// Just a note, entire if/else statement could be writen as:
-	// liftClicks = (liftStartsAtTop)?maxLiftClicks:0;
-	//
-	// i.e. variable = (true/false statement)?ifTrue:ifFalse;
-	// thus, if the true/false statement is true, variable will be set to ifTrue, otherwise, it will be set to ifFalse.
+    // liftStartsAtTop is in ChangeableConstants. Depending on if it is true or false,
+    // set liftClicks(the current position of the lift) to either the maximum or minimum value.
+    if(liftStartsAtTop)
+    {
+        liftClicks = maxLiftClicks;
+    }
+    else
+    {
+        liftClicks = 0;
+    }
+    // Just a note, entire if/else statement could be writen as:
+    // liftClicks = (liftStartsAtTop)?maxLiftClicks:0;
+    //
+    // i.e. variable = (true/false statement)?ifTrue:ifFalse;
+    // thus, if the true/false statement is true, variable will be set to ifTrue, otherwise, it will be set to ifFalse.
 }
 
 // This task is run when the competition goes to user control mode.
 task usercontrol()
 {
-	/*
-	 * This basicly says "while true is true, do everything inside, and only stop doing it when
-	 * true is not true (this never happens, so it will loop infinintely, or until the task is killed by the vex people.
-	 */
-	while (true)
-	{
-		/*
-		 * mainLoop is found in ZController.h
-		 * mainLoop sets all motor speeds and such based on the status of the buttons on the
-		 * Vex controller (i.e. if a button is down, it closes the claw)
-		 */
-		mainLoop();
-	}
+    /*
+     * This basicly says "while true is true, do everything inside, and only stop doing it when
+     * true is not true (this never happens, so it will loop infinintely, or until the task is killed by the vex people.
+     */
+    while (true)
+    {
+        /*
+         * mainLoop is found in ZController.h
+         * mainLoop sets all motor speeds and such based on the status of the buttons on the
+         * Vex controller (i.e. if a button is down, it closes the claw)
+         */
+        mainLoop();
+    }
 
-	/*
-	 * You will notice that the default template has another task, autonomous. However, since I wanted to use the same code for both competition and non-competition code, I moved that task into
-	 * "ZController.h", and then included it. Including a file acts as though I typed it in this file, so it runs as if it were actually here.
-	 */
+    /*
+     * You will notice that the default template has another task, autonomous. However, since I wanted to use the same code for both competition and non-competition code, I moved that task into
+     * "ZController.h", and then included it. Including a file acts as though I typed it in this file, so it runs as if it were actually here.
+     */
 }

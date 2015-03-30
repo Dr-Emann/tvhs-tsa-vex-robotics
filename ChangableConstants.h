@@ -10,20 +10,20 @@
  * declare a const at the begining of that function, and use that. I should have done more of that.
  */
 
-static bool const runAutonomous = true;		// If you want to disable autonomous mode, set this to false. WORKS ONLY IN main2.c
+static bool const runAutonomous = true;     // If you want to disable autonomous mode, set this to false. WORKS ONLY IN main2.c
 
-static bool const liftStartsAtTop = false;	// If the lift starts at the top, set to true, if lift starts at bottom, set to false
+static bool const liftStartsAtTop = false;  // If the lift starts at the top, set to true, if lift starts at bottom, set to false
 
-static int const maxLiftClicks = 749;		// clicks from bottom to top of lift : FORMALLY 750!!
+static int const maxLiftClicks = 749;       // clicks from bottom to top of lift : FORMALLY 750!!
 
-static int const partwayLiftClicks = 250; 	// clicks from bottom to mid-level (used for lowering rings onto posts)
+static int const partwayLiftClicks = 250;   // clicks from bottom to mid-level (used for lowering rings onto posts)
 
-static int const clawOpenPos = -10;			// the position to which the servos should be opened to when claw is just open and down
+static int const clawOpenPos = -10;         // the position to which the servos should be opened to when claw is just open and down
 
-static int const clawClosedPos = -80;		// the position to which the servos should be closed to when the claw is closed
+static int const clawClosedPos = -80;       // the position to which the servos should be closed to when the claw is closed
 
-static int const clawWideOpenPos = 60;		// the position to which the servos should be opened to when the claw is open fully, which only happens when claw is at or above partwayLiftClicks
+static int const clawWideOpenPos = 60;      // the position to which the servos should be opened to when the claw is open fully, which only happens when claw is at or above partwayLiftClicks
 
-static bool const goRight = true; 			// determines whether the robot will turn right after picking up rings in autonomous mode,
-											// as well as the direction the robot turns after depositing those rings, in an attempt to knock over the opposite color stack.
-											// true for blue, false for red
+static bool const goRight = true;           // determines whether the robot will turn right after picking up rings in autonomous mode,
+                                            // as well as the direction the robot turns after depositing those rings, in an attempt to knock over the opposite color stack.
+                                            // true for blue, false for red

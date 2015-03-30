@@ -45,26 +45,26 @@
 // Uncomment the next line to use the old controller
 // #define usingOldController 1
 #ifndef usingOldController // add a #define usingOldController to use old controller, else use the new controler mappings
-	#define cont5U vexRT[Btn5U]
-	#define cont5D vexRT[Btn5D]
-	#define cont6U vexRT[Btn6U]
-	#define cont6D vexRT[Btn6D]
-	#define cont7L vexRT[Btn7L]
-	#define cont7R vexRT[Btn7R]
-	#define cont7U vexRT[Btn7U]
-	#define cont7D vexRT[Btn7D]
-	#define cont8U vexRT[Btn8U]
-	#define cont8D vexRT[Btn8D]
-	#define cont8R vexRT[Btn8R]
-	#define cont8L vexRT[Btn8L]
+    #define cont5U vexRT[Btn5U]
+    #define cont5D vexRT[Btn5D]
+    #define cont6U vexRT[Btn6U]
+    #define cont6D vexRT[Btn6D]
+    #define cont7L vexRT[Btn7L]
+    #define cont7R vexRT[Btn7R]
+    #define cont7U vexRT[Btn7U]
+    #define cont7D vexRT[Btn7D]
+    #define cont8U vexRT[Btn8U]
+    #define cont8D vexRT[Btn8D]
+    #define cont8R vexRT[Btn8R]
+    #define cont8L vexRT[Btn8L]
 // Notice I never got around to adding equivilents for the 8 buttons. This is because there are less buttons on the old controller.
 #else
-	#define cont5U ((vexRT[Ch5]>0)?127:0)
-	#define cont5D ((vexRT[Ch5]<0)?127:0)
-	#define cont6U ((vexRT[Ch6]>0)?127:0)
-	#define cont6D ((vexRT[Ch6]<0)?127:0)
-	#define cont7L ((vexRT[Ch4]>0)?127:0)
-	#define cont7R ((vexRT[Ch4]<0)?127:0)
+    #define cont5U ((vexRT[Ch5]>0)?127:0)
+    #define cont5D ((vexRT[Ch5]<0)?127:0)
+    #define cont6U ((vexRT[Ch6]>0)?127:0)
+    #define cont6D ((vexRT[Ch6]<0)?127:0)
+    #define cont7L ((vexRT[Ch4]>0)?127:0)
+    #define cont7R ((vexRT[Ch4]<0)?127:0)
 #endif
 
 #define liftENC SensorValue[enc_lift]
